@@ -197,10 +197,10 @@ public class GraphOverlay : MonoBehaviour
 		m_Texture.Apply();
 
 		if (vehicleBody)
-			m_SpeedText.text = string.Format("Speed: {0:0.} km/h",Mathf.Round(vehicleBody.velocity.magnitude * 3.6f)) ;
+			m_SpeedText.text = string.Format("Speed: {0:0.00} m/s", vehicleBody.velocity.magnitude);
 	}
 
-	// Convert time-value to the pixel plot space
+	// Convert time-value to the pixel plot space.
 	Vector2 PlotSpace(int cursor, int sample, float value)
 	{
 		float x = (sample - cursor) * Time.fixedDeltaTime / widthSeconds * m_WidthPixels;
