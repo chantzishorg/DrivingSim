@@ -14,7 +14,6 @@ public class UpdateCarLocation : MonoBehaviour
     void Update()
     {
         App.MoveCar(transform.position[0], transform.position[2]);
-        //App.ReportSpeed(GetComponent<Rigidbody>().velocity.magnitude * 3.6f);
-        
+        App.ReportSpeed(GetComponent<Rigidbody>().velocity.magnitude * 3.6f);
     }
 }

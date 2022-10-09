@@ -55,6 +55,7 @@ public class SpeedLimit
 }
 public class App : MonoBehaviour
 {
+    public float initialSpeedLimit;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static MyPoint carLocation;
@@ -151,7 +152,6 @@ public class App : MonoBehaviour
 
     void Start()
     {
-        SplineN[] allSplineNObjects = GameObject.FindObjectsOfType<SplineN>();
-        Array.Sort(allSplineNObjects, (node1, node2) => node1.editorDisplayString.CompareTo(node2.editorDisplayString));
+        SetInitialSpeed(initialSpeedLimit);
     }
 }
