@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RoadArchitect;
-using RoadArchitect.Roads;
 using System;
 
 enum PassingCode : ushort
@@ -55,6 +53,7 @@ public class SpeedLimit
 }
 public class App : MonoBehaviour
 {
+    public Failure failureObject;
     public float initialSpeedLimit;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
@@ -99,11 +98,12 @@ public class App : MonoBehaviour
             }
         }
     }
-    public static void ReportSpeed(float speed)
+    public void ReportSpeed(float speed)
     {
         if (speed > currentSpeedLimit)
         {
             Debug.Log("game over");
+            failureObject.Reportfailure("you exceed the legal speed");
         }
     }
     private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine) {
@@ -152,6 +152,7 @@ public class App : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f;
         SetInitialSpeed(initialSpeedLimit);
     }
 }
