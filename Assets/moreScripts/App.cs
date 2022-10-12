@@ -74,7 +74,7 @@ public class App : MonoBehaviour
     {
         SpeedLimitList.Add(new SpeedLimit(new DirectedLine(x, z, width, vector_x, vector_z),newSpeedLimit,oldSpeedLimit));
     }
-    public static void MoveCar(float x,float z)
+    public void MoveCar(float x,float z)
     {
         MyPoint oldLocation = carLocation;
         carLocation = new MyPoint(x, z);
@@ -82,6 +82,7 @@ public class App : MonoBehaviour
         {
             PassingCode result = checkCross(oldLocation, carLocation, NoEntranceVector[i]);
             if (result==PassingCode.SameDirection) {
+                failureObject.Reportfailure("You entered to no entry place!");
                 Debug.Log("game over");
             }
         }
@@ -103,7 +104,7 @@ public class App : MonoBehaviour
         if (speed > currentSpeedLimit)
         {
             Debug.Log("game over");
-            failureObject.Reportfailure("you exceed the legal speed");
+            failureObject.Reportfailure("You exceeded the speed limit!");
         }
     }
     private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine) {

@@ -14,7 +14,7 @@ public class UpdateCarLocation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        App.MoveCar(transform.position[0], transform.position[2]);
+        appObject.MoveCar(transform.position[0], transform.position[2]);
         appObject.ReportSpeed(GetComponent<Rigidbody>().velocity.magnitude * 3.6f);
     }
 }
