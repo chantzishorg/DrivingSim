@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UpdateCarLocation : MonoBehaviour
 {
-    public App appObject;
+    //public App appObject;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,7 +14,7 @@ public class UpdateCarLocation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        appObject.MoveCar(transform.position[0], transform.position[2]);
-        appObject.ReportSpeed(GetComponent<Rigidbody>().velocity.magnitude * 3.6f);
+        App.MoveCar(transform.position[0], transform.position[2]);
+        App.ReportSpeed(GetComponent<Rigidbody>().velocity.magnitude * 3.6f);
     }
 }

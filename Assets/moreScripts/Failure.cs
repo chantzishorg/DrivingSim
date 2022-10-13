@@ -2,20 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
- 
-public class Failure : MonoBehaviour
+
+public class Failure
 {
-    public GameObject FailureTab;
-    public Text FailureText;
-    
-    public void Reportfailure(string failure)
+    public static void Reportfailure(string failure)
     {
-        FailureTab.SetActive(true);
-        FailureText.text = failure;
-        //GameObject failurescreen=GameObject.Find("FailureBackground");
-        //failurescreen.SetActive(true);
-        //var failuretext = failurescreen.transform.Find("Failuredescription");
-        // failuretext.GetComponent<Text>().text = failure;
+        var canvas = GameObject.Find("Canvas");
+        var failurescreen = canvas.transform.Find("FailureBackground");
+        failurescreen.gameObject.SetActive(true);
+        var failuretext = failurescreen.transform.Find("Failuredescription");
+        failuretext.GetComponent<Text>().text = failure;
         Time.timeScale = 0f;
         Debug.Log("game over");
     }

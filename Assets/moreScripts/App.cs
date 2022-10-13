@@ -51,12 +51,16 @@ public class SpeedLimit
         this.oldSpeedLimit = oldSpeedLimit;
     }
 }
+
 public class App : MonoBehaviour
 {
-    public Failure failureObject;
+    //public GameObject failureObject
+    public static bool isStop = false;
     public float initialSpeedLimit;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
+    private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
+    private static List<DirectedLine> stopSecondVector = new List<DirectedLine>();
     private static MyPoint carLocation;
     private static float currentSpeedLimit;
     public static void SetInitialCarLocation(float x, float z)
@@ -67,22 +71,35 @@ public class App : MonoBehaviour
     {
         currentSpeedLimit = speed;
     }
-    public static void AddNoEntrance(float x,float z,float width,float vector_x,float vector_z) {
-        NoEntranceVector.Add(new DirectedLine(x,z,width,vector_x,vector_z));
+    public static void AddNoEntrance(float x, float z, float width, float vector_x, float vector_z)
+    {
+        NoEntranceVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
     }
     public static void AddSpeedLimit(float x, float z, float width, float vector_x, float vector_z, float newSpeedLimit, float oldSpeedLimit)
     {
-        SpeedLimitList.Add(new SpeedLimit(new DirectedLine(x, z, width, vector_x, vector_z),newSpeedLimit,oldSpeedLimit));
+        SpeedLimitList.Add(new SpeedLimit(new DirectedLine(x, z, width, vector_x, vector_z), newSpeedLimit, oldSpeedLimit));
     }
-    public void MoveCar(float x,float z)
+
+    public static void AddFirstStop(float x, float z, float width, float vector_x, float vector_z) 
+    {
+        stopFirstVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
+    }
+
+    public static void AddSecondStop(float x, float z, float width, float vector_x, float vector_z)
+    {
+        stopSecondVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
+    }
+
+    public static void MoveCar(float x, float z)
     {
         MyPoint oldLocation = carLocation;
         carLocation = new MyPoint(x, z);
-        for (int i=0; i< NoEntranceVector.Count; i++)
+        for (int i = 0; i < NoEntranceVector.Count; i++)
         {
             PassingCode result = checkCross(oldLocation, carLocation, NoEntranceVector[i]);
-            if (result==PassingCode.SameDirection) {
-                failureObject.Reportfailure("You entered to no entry place!");
+            if (result == PassingCode.SameDirection)
+            {
+                viewModel.Reportfailure("You entered to no entry place!");
                 Debug.Log("game over");
             }
         }
@@ -98,16 +115,45 @@ public class App : MonoBehaviour
                 currentSpeedLimit = SpeedLimitList[i].oldSpeedLimit;
             }
         }
+        // check stop stripes
+        //loop over the first stop stripes 
+        for (int i = 0; i < stopFirstVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, stopFirstVector[i]);
+            if (result == PassingCode.SameDirection)
+            {
+                isStop = false;
+            }
+        }
+        //loop over the second stop stripes 
+        for (int i = 0; i < stopSecondVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, stopSecondVector[i]);
+            if (result == PassingCode.SameDirection)
+            {
+                if (isStop == false)
+                {
+                    viewModel.Reportfailure("You dont stop!");
+                }
+            }
+        }
     }
-    public void ReportSpeed(float speed)
+    public static void ReportSpeed(float speed)
     {
+        // if the speed 0 the car stops
+        if (speed < 1)
+        {
+           // Debug.Log("the speed is 0");
+            isStop = true;
+        }
         if (speed > currentSpeedLimit)
         {
             Debug.Log("game over");
-            failureObject.Reportfailure("You exceeded the speed limit!");
+            viewModel.Reportfailure("You exceeded the speed limit!");
         }
     }
-    private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine) {
+    private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine)
+    {
         // start_end is a line between start and end
         float m_start_end;
         float b_start_end;
@@ -145,7 +191,7 @@ public class App : MonoBehaviour
         distance = Mathf.Sqrt((x_i - directedLine.x) * (x_i - directedLine.x) + (z_i - directedLine.z) * (z_i - directedLine.z));
         // if beyond the directedLine
         if (distance > directedLine.width / 2f) return PassingCode.None;
- 
+
         if (directedLine.vector_z > 0 && b_start >= b_end) return PassingCode.OppositeDirection;
         if (directedLine.vector_z < 0 && b_end >= b_start) return PassingCode.OppositeDirection;
         return PassingCode.SameDirection;
@@ -153,6 +199,7 @@ public class App : MonoBehaviour
 
     void Start()
     {
+       // viewModel.loadImage("speedLimit30.png");
         Time.timeScale = 1f;
         SetInitialSpeed(initialSpeedLimit);
     }
