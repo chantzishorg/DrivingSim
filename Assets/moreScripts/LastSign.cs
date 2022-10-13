@@ -10,7 +10,6 @@ public class LastSign : MonoBehaviour
     public static void loadImage(string fileName)
     {
         string fullFileName= Path.Combine("Assets/moreSigns/", fileName);
-        Debug.Log(fullFileName);
         var myImage = GameObject.Find("Canvas").transform.Find("imageSign").GetComponent<RawImage>();
         Debug.Log(myImage.texture);
         if (File.Exists(fullFileName))
@@ -21,5 +20,13 @@ public class LastSign : MonoBehaviour
             tex.LoadImage(imageData);
             myImage.texture = tex;
         }
+    }
+    public static void clearImage()
+    {
+        var myImage = GameObject.Find("Canvas").transform.Find("imageSign").GetComponent<RawImage>();
+        Debug.Log(myImage.texture);
+         myImage.texture = null;
+        Debug.Log(myImage.texture);
+
     }
 }

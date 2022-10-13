@@ -8,11 +8,13 @@ public class viewModel
     {
         Failure.Reportfailure(failure);
     }
-   /*
+   
     public static void loadImage(string fileName)
     {
         LastSign.loadImage(fileName);
     }
-   */
-    
+    public static void clearImage()
+    {
+        LastSign.clearImage();
+    }
 }

@@ -52,15 +52,29 @@ public class SpeedLimit
     }
 }
 
+public class Sign
+{
+    // sign line
+    public DirectedLine signLine;
+    // name of the image of the sign
+    public string nameImage;
+    public Sign(DirectedLine signLine, string nameImage)
+    {
+        this.signLine = signLine;
+        this.nameImage = nameImage;
+    }
+}
 public class App : MonoBehaviour
 {
     //public GameObject failureObject
     public static bool isStop = false;
     public float initialSpeedLimit;
+    public static string nameImage;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
     private static List<DirectedLine> stopSecondVector = new List<DirectedLine>();
+    private static List<Sign> signVector = new List<Sign>();
     private static MyPoint carLocation;
     private static float currentSpeedLimit;
     public static void SetInitialCarLocation(float x, float z)
@@ -90,6 +104,11 @@ public class App : MonoBehaviour
         stopSecondVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
     }
 
+    public static void AddSign(float x, float z, float width, float vector_x, float vector_z, string nameImage)
+    {
+        signVector.Add(new Sign(new DirectedLine(x, z, width, vector_x, vector_z), nameImage));
+    }
+
     public static void MoveCar(float x, float z)
     {
         MyPoint oldLocation = carLocation;
@@ -100,6 +119,7 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 viewModel.Reportfailure("You entered to no entry place!");
+                viewModel.clearImage();
                 Debug.Log("game over");
             }
         }
@@ -109,10 +129,12 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 currentSpeedLimit = SpeedLimitList[i].newSpeedLimit;
+                viewModel.clearImage();
             }
             if (result == PassingCode.OppositeDirection)
             {
                 currentSpeedLimit = SpeedLimitList[i].oldSpeedLimit;
+                viewModel.clearImage();
             }
         }
         // check stop stripes
@@ -134,7 +156,17 @@ public class App : MonoBehaviour
                 if (isStop == false)
                 {
                     viewModel.Reportfailure("You dont stop!");
+                    viewModel.clearImage();
                 }
+            }
+        }
+        //loop over the signVector
+        for (int i = 0; i < signVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, signVector[i].signLine);
+            if (result == PassingCode.SameDirection)
+            {
+                viewModel.loadImage(signVector[i].nameImage);
             }
         }
     }
@@ -150,6 +182,7 @@ public class App : MonoBehaviour
         {
             Debug.Log("game over");
             viewModel.Reportfailure("You exceeded the speed limit!");
+            viewModel.clearImage();
         }
     }
     private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine)
@@ -199,7 +232,7 @@ public class App : MonoBehaviour
 
     void Start()
     {
-       // viewModel.loadImage("speedLimit30.png");
+        //viewModel.loadImage("speedLimit30.png");
         Time.timeScale = 1f;
         SetInitialSpeed(initialSpeedLimit);
     }
