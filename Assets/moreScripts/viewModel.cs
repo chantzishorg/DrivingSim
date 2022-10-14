@@ -9,9 +9,9 @@ public class viewModel
         Failure.Reportfailure(failure);
     }
    
-    public static void loadImage(string fileName)
+    public static void loadImage(string fileName,bool isInstruction)
     {
-        LastSign.loadImage(fileName);
+        LastSign.loadImage(fileName, isInstruction);
     }
     public static void clearImage()
     {

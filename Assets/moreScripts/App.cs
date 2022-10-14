@@ -9,6 +9,12 @@ enum PassingCode : ushort
     OppositeDirection = 1,
     SameDirection = 2,
 }
+
+public enum InstructionDirection : ushort
+{
+    turnRight = 0,
+    turnLeft = 1,
+}
 public class MyPoint
 {
     public float x, z;
@@ -64,6 +70,20 @@ public class Sign
         this.nameImage = nameImage;
     }
 }
+
+// class of the turn instruction
+public class TurnInstruction
+{
+    // turn line
+    public DirectedLine turnLine;
+    public InstructionDirection turnDirection;
+    public TurnInstruction(DirectedLine turnLine, InstructionDirection turnDirection)
+    {
+        this.turnLine = turnLine;
+        this.turnDirection = turnDirection;
+    }
+}
+
 public class App : MonoBehaviour
 {
     //public GameObject failureObject
@@ -74,7 +94,10 @@ public class App : MonoBehaviour
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
     private static List<DirectedLine> stopSecondVector = new List<DirectedLine>();
+    // list of the turn lines
+    private static List<TurnInstruction> turnDirectionVector = new List<TurnInstruction>();
     private static List<Sign> signVector = new List<Sign>();
+    private static List<DirectedLine> noValidDirectionVector = new List<DirectedLine>();
     private static MyPoint carLocation;
     private static float currentSpeedLimit;
     public static void SetInitialCarLocation(float x, float z)
@@ -109,6 +132,15 @@ public class App : MonoBehaviour
         signVector.Add(new Sign(new DirectedLine(x, z, width, vector_x, vector_z), nameImage));
     }
 
+    // add the direction instruction to list
+    public static void AddDirectionInstruction(float x, float z, float width, float vector_x, float vector_z, InstructionDirection turnDirection)
+    {
+        turnDirectionVector.Add(new TurnInstruction(new DirectedLine(x, z, width, vector_x, vector_z), turnDirection));
+    }
+    public static void AddnoValidDirectionVector(float x, float z, float width, float vector_x, float vector_z)
+    {
+        noValidDirectionVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
+    }
     public static void MoveCar(float x, float z)
     {
         MyPoint oldLocation = carLocation;
@@ -120,7 +152,9 @@ public class App : MonoBehaviour
             {
                 viewModel.Reportfailure("You entered to no entry place!");
                 viewModel.clearImage();
-                Debug.Log("game over");
+                //Debug.Log("game over");
+                //Debug.Log($"{NoEntranceVector[i].x},{NoEntranceVector[i].z},{NoEntranceVector[i].width},{NoEntranceVector[i].vector_x}," +
+                //$"{NoEntranceVector[i].vector_z}");
             }
         }
         for (int i = 0; i < SpeedLimitList.Count; i++)
@@ -166,7 +200,34 @@ public class App : MonoBehaviour
             PassingCode result = checkCross(oldLocation, carLocation, signVector[i].signLine);
             if (result == PassingCode.SameDirection)
             {
-                viewModel.loadImage(signVector[i].nameImage);
+                viewModel.loadImage(signVector[i].nameImage,false);
+            }
+        }
+
+        //loop over the turnDirectionVector
+        for (int i = 0; i < turnDirectionVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, turnDirectionVector[i].turnLine);
+            if (result == PassingCode.SameDirection)
+            {
+                Debug.Log("turn");
+                if (turnDirectionVector[i].turnDirection == InstructionDirection.turnRight)
+                {
+                    viewModel.loadImage("turnRight.png",true);
+                }
+                else
+                {
+                    viewModel.loadImage("turnLeft.png",true);
+                }
+            }
+        }
+        for (int i = 0; i < noValidDirectionVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, noValidDirectionVector[i]);
+            if (result == PassingCode.SameDirection)
+            {
+                viewModel.Reportfailure("You didn't turn in the right direction!");
+                viewModel.clearImage();
             }
         }
     }

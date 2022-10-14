@@ -7,15 +7,25 @@ using System.IO;
 public class LastSign : MonoBehaviour
 {
     // Start is called before the first frame update
-    public static void loadImage(string fileName)
+    public static void loadImage(string fileName, bool isInstruction)
     {
+
+        string nameImageObject;
+        if (isInstruction == true)
+        {
+            nameImageObject= "imageInstruction";
+        }
+        else
+        {
+            nameImageObject= "imageSign";
+        }
+        
         string fullFileName= Path.Combine("Assets/moreSigns/", fileName);
-        var myImage = GameObject.Find("Canvas").transform.Find("imageSign").GetComponent<RawImage>();
-        Debug.Log(myImage.texture);
+        var myImage = GameObject.Find("Canvas").transform.Find(nameImageObject).GetComponent<RawImage>();
+        myImage.gameObject.SetActive(true);
         if (File.Exists(fullFileName))
         {
             byte[] imageData = File.ReadAllBytes(fullFileName);
-            Debug.Log($"{imageData.Length}");
             Texture2D tex = new Texture2D(512, 512);
             tex.LoadImage(imageData);
             myImage.texture = tex;
@@ -23,10 +33,8 @@ public class LastSign : MonoBehaviour
     }
     public static void clearImage()
     {
-        var myImage = GameObject.Find("Canvas").transform.Find("imageSign").GetComponent<RawImage>();
-        Debug.Log(myImage.texture);
-         myImage.texture = null;
-        Debug.Log(myImage.texture);
-
+        var myImage = GameObject.Find("Canvas").transform.Find("imageSign");
+        myImage.GetComponent<RawImage>().texture = null;
+        myImage.gameObject.SetActive(false);
     }
 }

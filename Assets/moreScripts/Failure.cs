@@ -15,5 +15,4 @@ public class Failure
         Time.timeScale = 0f;
         Debug.Log("game over");
     }
-
 }
