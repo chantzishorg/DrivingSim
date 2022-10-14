@@ -6,7 +6,6 @@ using System.IO;
 
 public class LastSign : MonoBehaviour
 {
-    // Start is called before the first frame update
     public static void loadImage(string fileName, bool isInstruction)
     {
 

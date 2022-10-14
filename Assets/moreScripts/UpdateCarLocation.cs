@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UpdateCarLocation : MonoBehaviour
 {
-    //public App appObject;
     // Start is called before the first frame update
     void Start()
     {

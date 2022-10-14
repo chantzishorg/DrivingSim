@@ -86,10 +86,8 @@ public class TurnInstruction
 
 public class App : MonoBehaviour
 {
-    //public GameObject failureObject
-    public static bool isStop = false;
     public float initialSpeedLimit;
-    public static string nameImage;
+    private static bool isStop = false;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
@@ -98,11 +96,26 @@ public class App : MonoBehaviour
     private static List<TurnInstruction> turnDirectionVector = new List<TurnInstruction>();
     private static List<Sign> signVector = new List<Sign>();
     private static List<DirectedLine> noValidDirectionVector = new List<DirectedLine>();
-    private static MyPoint carLocation;
+    private static MyPoint carLocation = null;
     private static float currentSpeedLimit;
+    private static RoadsModel roadsModel = null;
+
+    public static void SetRoadsLocation(List<List<Vector3>> allRoadsNodes)
+    {
+        roadsModel = new RoadsModel(allRoadsNodes);
+        if (carLocation != null)
+        {
+            roadsModel.setCarStartingPoint(carLocation.x, carLocation.z);
+        }
+    }
+
     public static void SetInitialCarLocation(float x, float z)
     {
         carLocation = new MyPoint(x, z);
+        if (roadsModel != null)
+        {
+            roadsModel.setCarStartingPoint(x, z);
+        }
     }
     public static void SetInitialSpeed(float speed)
     {
@@ -143,6 +156,7 @@ public class App : MonoBehaviour
     }
     public static void MoveCar(float x, float z)
     {
+        roadsModel.MoveCar(x, z);
         MyPoint oldLocation = carLocation;
         carLocation = new MyPoint(x, z);
         for (int i = 0; i < NoEntranceVector.Count; i++)
