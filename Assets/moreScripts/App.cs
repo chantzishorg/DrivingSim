@@ -84,8 +84,22 @@ public class TurnInstruction
     }
 }
 
+// class of score spline
+public class scoreSpline
+{
+    public DirectedLine scoreLine;
+    public int score;
+    public scoreSpline(DirectedLine scoreLine, int score)
+    {
+        this.scoreLine = scoreLine;
+        this.score = score;
+    }
+}
+
 public class App : MonoBehaviour
 {
+    private static int score = 0;
+    public static int Score { get { return score; } }
     public float initialSpeedLimit;
     private static bool isStop = false;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
@@ -96,9 +110,17 @@ public class App : MonoBehaviour
     private static List<TurnInstruction> turnDirectionVector = new List<TurnInstruction>();
     private static List<Sign> signVector = new List<Sign>();
     private static List<DirectedLine> noValidDirectionVector = new List<DirectedLine>();
+    private static List<DirectedLine> ValidDirectionVector = new List<DirectedLine>();
+    private static List<scoreSpline> scoreVector = new List<scoreSpline>();
     private static MyPoint carLocation = null;
     private static float currentSpeedLimit;
     private static RoadsModel roadsModel = null;
+    private static List<(Vector2, Vector2)> npcCars = new List<(Vector2, Vector2)>();
+
+    public static void AddNpcCars(float pX, float pY, float vX, float vY)
+    {
+
+    }
 
     public static void SetRoadsLocation(List<List<Vector3>> allRoadsNodes)
     {
@@ -154,9 +176,17 @@ public class App : MonoBehaviour
     {
         noValidDirectionVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
     }
-    public static void MoveCar(float x, float z)
+    public static void AddValidDirectionVector(float x, float z, float width, float vector_x, float vector_z)
     {
-        roadsModel.MoveCar(x, z);
+        ValidDirectionVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
+    }
+    public static void AddScoreVector(float x, float z, float width, float vector_x, float vector_z, int score)
+    {
+        scoreVector.Add(new scoreSpline(new DirectedLine(x, z, width, vector_x, vector_z), score));
+    }
+    public static void MoveCar(float x, float z, Vector2 direction)
+    {
+        roadsModel.MoveCar(x, z, direction);
         MyPoint oldLocation = carLocation;
         carLocation = new MyPoint(x, z);
         for (int i = 0; i < NoEntranceVector.Count; i++)
@@ -165,7 +195,7 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 viewModel.Reportfailure("You entered to no entry place!");
-                viewModel.clearImage();
+                //viewModel.clearImage();
                 //Debug.Log("game over");
                 //Debug.Log($"{NoEntranceVector[i].x},{NoEntranceVector[i].z},{NoEntranceVector[i].width},{NoEntranceVector[i].vector_x}," +
                 //$"{NoEntranceVector[i].vector_z}");
@@ -177,12 +207,12 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 currentSpeedLimit = SpeedLimitList[i].newSpeedLimit;
-                viewModel.clearImage();
+                viewModel.clearImage(false);
             }
             if (result == PassingCode.OppositeDirection)
             {
                 currentSpeedLimit = SpeedLimitList[i].oldSpeedLimit;
-                viewModel.clearImage();
+                viewModel.clearImage(false);
             }
         }
         // check stop stripes
@@ -204,7 +234,7 @@ public class App : MonoBehaviour
                 if (isStop == false)
                 {
                     viewModel.Reportfailure("You dont stop!");
-                    viewModel.clearImage();
+                    viewModel.clearImage(false);
                 }
             }
         }
@@ -227,11 +257,11 @@ public class App : MonoBehaviour
                 Debug.Log("turn");
                 if (turnDirectionVector[i].turnDirection == InstructionDirection.turnRight)
                 {
-                    viewModel.loadImage("turnRight.png",true);
+                    viewModel.loadImage("Assets/moreSigns/turnRight.png", true);
                 }
                 else
                 {
-                    viewModel.loadImage("turnLeft.png",true);
+                    viewModel.loadImage("Assets/moreSigns/turnLeft.png", true);
                 }
             }
         }
@@ -241,12 +271,29 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 viewModel.Reportfailure("You didn't turn in the right direction!");
-                viewModel.clearImage();
+                //viewModel.clearImage();
+            }
+        }
+        for (int i = 0; i < ValidDirectionVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, ValidDirectionVector[i]);
+            if (result == PassingCode.SameDirection)
+            {
+                viewModel.clearImage(true);
+            }
+        }
+        for (int i = 0; i < scoreVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, scoreVector[i].scoreLine);
+            if (result == PassingCode.SameDirection)
+            {
+                score += scoreVector[i].score;
+                viewModel.setScore(score);
             }
         }
     }
     public static void ReportSpeed(float speed)
-    {
+    {/*
         // if the speed 0 the car stops
         if (speed < 1)
         {
@@ -259,7 +306,9 @@ public class App : MonoBehaviour
             viewModel.Reportfailure("You exceeded the speed limit!");
             viewModel.clearImage();
         }
-    }
+    */}
+
+    // function that calucate the rectangle around the center of the car
     private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine)
     {
         // start_end is a line between start and end
@@ -273,9 +322,13 @@ public class App : MonoBehaviour
         // vector_m = slope of the vector of directedLine (in order to calculate -1/vector_m which is the slope of directedLine)
         float vector_m = directedLine.vector_z / directedLine.vector_x;
         // can't calculate -1/0
+        // TODO: probably should check if close enough to zero not exactly equal
+        // if(Mathf.Abs(vector_m) < 0.0001)
         if (vector_m == 0f)
         {
+            // if they start and end in the same side
             if (directedLine.x <= start.x && directedLine.x <= end.x || directedLine.x >= start.x && directedLine.x >= end.x) return PassingCode.None;
+            // calculate line between start and end
             m_start_end = (end.z - start.z) / (end.x - start.x);
             b_start_end = -m_start_end * start.x + start.z;
             z_i = m_start_end * directedLine.x + b_start_end;
@@ -308,7 +361,13 @@ public class App : MonoBehaviour
     void Start()
     {
         //viewModel.loadImage("speedLimit30.png");
+        viewModel.setScore(score);
         Time.timeScale = 1f;
         SetInitialSpeed(initialSpeedLimit);
+
+    }
+
+    static public void EndGame() {
+        PlayFabManager.SetUserData(score);
     }
 }
