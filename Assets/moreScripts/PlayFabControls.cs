@@ -70,6 +70,10 @@ public class PlayFabControls : MonoBehaviour
     public void LogIn()
     {
         var request = new LoginWithEmailAddressRequest { Email = userEmailLogin.text, Password = Encrypt(userPasswordLogin.text)};
+        //Debug.Log(userEmailLogin.text);
+        //Debug.Log(userPasswordLogin.text);
+      //  var request = new LoginWithEmailAddressRequest { Email = "chaim@gmail.com", Password = Encrypt("****")};
+
         PlayFabClientAPI.LoginWithEmailAddress(request, LogInSuccess, LogInError);
     }
 
@@ -77,6 +81,7 @@ public class PlayFabControls : MonoBehaviour
     {
         errorSignUp.text = "";
         errorLogin.text = "";
+      //  DontDestroyOnLoad(); // keeps this gameobject through scene transitions
         StartGame();
     }
 
@@ -89,4 +94,33 @@ public class PlayFabControls : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
+    /*
+    public void SendLeaderboard(int score)
+    {
+        var request = new UpdatePlayerStatisticsRequest
+        {
+            Statistics = new List<StatisticUpdate>
+            {
+                new StatisticUpdate
+                {
+                    StatisticName="PlatformScore",
+                    Value=score
+                }
+            }
+        };
+        PlayFabClientAPI.UpdatePlayerStatistics(request, OnLeaderboardUpdate, LogInError);
+    }
+        void OnLeaderboardUpdate(UpdatePlayerStatisticsResult result)
+        {
+            Debug.Log("successful leaderboard sent");
+     
+    }
+    */
+    /*
+    void Start()
+    {
+        DontDestroyOnLoad(this.gameObject); // keeps this gameobject through scene transitions
+        // here you might kick off some kind of login thing, like showing a login box or whatever
+    }
+    */
 }

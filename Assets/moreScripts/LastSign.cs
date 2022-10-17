@@ -19,20 +19,30 @@ public class LastSign : MonoBehaviour
             nameImageObject= "imageSign";
         }
         
-        string fullFileName= Path.Combine("Assets/moreSigns/", fileName);
         var myImage = GameObject.Find("Canvas").transform.Find(nameImageObject).GetComponent<RawImage>();
         myImage.gameObject.SetActive(true);
-        if (File.Exists(fullFileName))
+        if (File.Exists(fileName))
         {
-            byte[] imageData = File.ReadAllBytes(fullFileName);
+            //System.Drawing.Image img = System.Drawing.Image.FromFile(fileName);
+            //MessageBox.Show("Width: " + img.Width + ", Height: " + img.Height);
+            byte[] imageData = File.ReadAllBytes(fileName);
             Texture2D tex = new Texture2D(512, 512);
             tex.LoadImage(imageData);
             myImage.texture = tex;
         }
     }
-    public static void clearImage()
+    public static void clearImage(bool isInstruction)
     {
-        var myImage = GameObject.Find("Canvas").transform.Find("imageSign");
+        string nameImageObject;
+        if (isInstruction == true)
+        {
+            nameImageObject = "imageInstruction";
+        }
+        else
+        {
+            nameImageObject = "imageSign";
+        }
+        var myImage = GameObject.Find("Canvas").transform.Find(nameImageObject);
         myImage.GetComponent<RawImage>().texture = null;
         myImage.gameObject.SetActive(false);
     }

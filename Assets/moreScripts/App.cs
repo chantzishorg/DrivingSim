@@ -15,6 +15,7 @@ public enum InstructionDirection : ushort
     turnRight = 0,
     turnLeft = 1,
 }
+/*
 public class MyPoint
 {
     public float x, z;
@@ -24,6 +25,7 @@ public class MyPoint
         this.z = z;
     }
 }
+*/
 public class DirectedLine
 {
     //public MyPoint middle;
@@ -112,14 +114,15 @@ public class App : MonoBehaviour
     private static List<DirectedLine> noValidDirectionVector = new List<DirectedLine>();
     private static List<DirectedLine> ValidDirectionVector = new List<DirectedLine>();
     private static List<scoreSpline> scoreVector = new List<scoreSpline>();
-    private static MyPoint carLocation = null;
+    private static Vector2 carLocation = new Vector2(-1f,-1f);
     private static float currentSpeedLimit;
     private static RoadsModel roadsModel = null;
     private static List<(Vector2, Vector2)> npcCars = new List<(Vector2, Vector2)>();
 
-    public static void AddNpcCars(float pX, float pY, float vX, float vY)
+    public static void AddNpcCars(float pX, float pY, Vector2 vector)
     {
-
+        Vector2 point = new Vector2(pX, pY);
+        npcCars.Add((point,vector));
     }
 
     public static void SetRoadsLocation(List<List<Vector3>> allRoadsNodes)
@@ -127,13 +130,13 @@ public class App : MonoBehaviour
         roadsModel = new RoadsModel(allRoadsNodes);
         if (carLocation != null)
         {
-            roadsModel.setCarStartingPoint(carLocation.x, carLocation.z);
+            roadsModel.setCarStartingPoint(carLocation.x, carLocation.y);
         }
     }
 
     public static void SetInitialCarLocation(float x, float z)
     {
-        carLocation = new MyPoint(x, z);
+        carLocation = new Vector2(x, z);
         if (roadsModel != null)
         {
             roadsModel.setCarStartingPoint(x, z);
@@ -187,8 +190,8 @@ public class App : MonoBehaviour
     public static void MoveCar(float x, float z, Vector2 direction)
     {
         roadsModel.MoveCar(x, z, direction);
-        MyPoint oldLocation = carLocation;
-        carLocation = new MyPoint(x, z);
+        Vector2 oldLocation = carLocation;
+        carLocation = new Vector2(x, z);
         for (int i = 0; i < NoEntranceVector.Count; i++)
         {
             PassingCode result = checkCross(oldLocation, carLocation, NoEntranceVector[i]);
@@ -291,9 +294,16 @@ public class App : MonoBehaviour
                 viewModel.setScore(score);
             }
         }
+        foreach((Vector2 point, Vector2 vector) npcCar in npcCars)
+        {
+            if (Collision.isIntersection(carLocation,npcCar.point,direction,npcCar.vector))
+            {
+                viewModel.Reportfailure("You collide with car!");
+            }
+        }
     }
     public static void ReportSpeed(float speed)
-    {/*
+    {
         // if the speed 0 the car stops
         if (speed < 1)
         {
@@ -304,12 +314,11 @@ public class App : MonoBehaviour
         {
             Debug.Log("game over");
             viewModel.Reportfailure("You exceeded the speed limit!");
-            viewModel.clearImage();
         }
-    */}
+    }
 
     // function that calucate the rectangle around the center of the car
-    private static PassingCode checkCross(MyPoint start, MyPoint end, DirectedLine directedLine)
+    private static PassingCode checkCross(Vector2 start, Vector2 end, DirectedLine directedLine)
     {
         // start_end is a line between start and end
         float m_start_end;
@@ -329,8 +338,8 @@ public class App : MonoBehaviour
             // if they start and end in the same side
             if (directedLine.x <= start.x && directedLine.x <= end.x || directedLine.x >= start.x && directedLine.x >= end.x) return PassingCode.None;
             // calculate line between start and end
-            m_start_end = (end.z - start.z) / (end.x - start.x);
-            b_start_end = -m_start_end * start.x + start.z;
+            m_start_end = (end.y - start.y) / (end.x - start.x);
+            b_start_end = -m_start_end * start.x + start.y;
             z_i = m_start_end * directedLine.x + b_start_end;
             distance = Mathf.Abs(z_i - directedLine.z);
             if (distance > directedLine.width / 2f) return PassingCode.None;
@@ -340,13 +349,13 @@ public class App : MonoBehaviour
         }
         float m = -1 / vector_m;
         // start and end are two lines parallel to directedLine
-        float b_start = -m * start.x + start.z;
-        float b_end = -m * end.x + end.z;
+        float b_start = -m * start.x + start.y;
+        float b_end = -m * end.x + end.y;
         float b_directedLine = -m * directedLine.x + directedLine.z;
         // if start and end are both on the same side
         if (b_directedLine <= b_start && b_directedLine <= b_end || b_directedLine >= b_start && b_directedLine >= b_end) return PassingCode.None;
-        m_start_end = (end.z - start.z) / (end.x - start.x);
-        b_start_end = -m_start_end * start.x + start.z;
+        m_start_end = (end.y - start.y) / (end.x - start.x);
+        b_start_end = -m_start_end * start.x + start.y;
         x_i = (b_directedLine - b_start_end) / (m_start_end - m);
         z_i = m * x_i + b_directedLine;
         distance = Mathf.Sqrt((x_i - directedLine.x) * (x_i - directedLine.x) + (z_i - directedLine.z) * (z_i - directedLine.z));

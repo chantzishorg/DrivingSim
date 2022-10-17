@@ -11,7 +11,7 @@ public class Failure
         var failurescreen = canvas.transform.Find("FailureBackground");
         failurescreen.gameObject.SetActive(true);
         var failuretext = failurescreen.transform.Find("Failuredescription");
-        failuretext.GetComponent<Text>().text = failure;
+        failuretext.GetComponent<Text>().text = failure +$" Your score is: {App.Score}";
         Time.timeScale = 0f;
         Debug.Log("game over");
     }
