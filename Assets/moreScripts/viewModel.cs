@@ -5,9 +5,15 @@ using PlayFab;
 using PlayFab.ClientModels;
 public class viewModel
 {
+    // variable that check if the game is runnning
+    public static bool isRunning = true;
     public static void Reportfailure(string failure)
     {
-        Failure.Reportfailure(failure);
+        if (isRunning)
+        {
+            isRunning = false;
+            Failure.Reportfailure(failure);
+        }
     }
    
     public static void loadImage(string fileName,bool isInstruction)
@@ -92,17 +98,29 @@ public class viewModel
 
     public static void MoveCar(float x, float z, Vector2 direction)
     {
-        App.MoveCar(x, z, direction);
+        if (isRunning)
+        {
+            isRunning = false;
+            App.MoveCar(x, z, direction);
+        }
     }
 
     public static void ReportSpeed(float speed)
     {
-        App.ReportSpeed(speed);
+        if (isRunning)
+        {
+            isRunning = false;
+            App.ReportSpeed(speed);
+        }
     }
 
     public static void EndGame()
     {
-        App.EndGame();
+        if (isRunning)
+        {
+            isRunning = false;
+            App.EndGame();
+        }
     }
 
     //public static void setTable(Dictionary<string, UserDataRecord> dict)

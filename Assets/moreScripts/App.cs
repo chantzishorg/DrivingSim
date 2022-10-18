@@ -379,4 +379,24 @@ public class App : MonoBehaviour
      public static void EndGame() {
         PlayFabManager.SetUserData(score);
      }
+
+    void Awake()
+    {
+        score = 0;
+        viewModel.isRunning = true;
+        isStop = false;
+        NoEntranceVector = new List<DirectedLine>();
+        SpeedLimitList = new List<SpeedLimit>();
+        stopFirstVector = new List<DirectedLine>();
+        stopSecondVector = new List<DirectedLine>();
+        // list of the turn lines
+        turnDirectionVector = new List<TurnInstruction>();
+        signVector = new List<Sign>();
+        noValidDirectionVector = new List<DirectedLine>();
+        ValidDirectionVector = new List<DirectedLine>();
+        scoreVector = new List<scoreSpline>();
+        carLocation = new Vector2(-1f, -1f);
+        roadsModel = null;
+        npcCars = new List<(Vector2, Vector2)>();
+    }
 }
