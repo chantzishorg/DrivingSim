@@ -16,7 +16,7 @@ public class Collision
         }
         else vector_m = double.PositiveInfinity;
         //calucate equation, y=mx+b , b=y-mx
-        // double vector_b = centerPoint.y - vector_m * centerPoint.x;
+        //double vector_b = centerPoint.y - vector_m * centerPoint.x;
         //calucate equation line perpendicular that throught the center point  
         double m;
         if (double.IsInfinity(vector_m))
@@ -41,7 +41,7 @@ public class Collision
         // find two middle points on two lines of rectangle
         List<Vector2> twoMiddlePoints = TwoPoints(centerPoint, distance, m);
         Vector2 firstMiddlePoint = twoMiddlePoints[0];
-        Vector2 secondMiddlePoint = twoMiddlePoints[0];
+        Vector2 secondMiddlePoint = twoMiddlePoints[1];
         distance = length / 2;
         //two corners of the rectangle
         List<Vector2> twoPointsOfRectangle = TwoPoints(firstMiddlePoint, distance, vector_m);
@@ -52,13 +52,6 @@ public class Collision
         pointRectangle.Add(twoPointsOfRectangle[1]);
         pointRectangle.Add(otherPointsOfRectangle[0]);
         pointRectangle.Add(otherPointsOfRectangle[1]);
-        //for debug
-        // Print the first Point
-        foreach (var point in pointRectangle)
-        {
-            Debug.Log(point.x + ", " + point.y);
-
-        }
         return pointRectangle;
 
     }

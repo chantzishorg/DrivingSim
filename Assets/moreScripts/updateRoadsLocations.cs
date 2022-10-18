@@ -28,6 +28,6 @@ public class updateRoadsLocations : MonoBehaviour
             allRoadsNodes.Add(roadNodes);
             //Debug.Log(road.spline.nodes[road.spline.nodes.Count - 1].tangent);
         }
-        App.SetRoadsLocation(allRoadsNodes);
+        viewModel.SetRoadsLocation(allRoadsNodes);
     }
 }

@@ -36,9 +36,9 @@ public class HistoryScores : MonoBehaviour
 
     public  void setTable(Dictionary<string, UserDataRecord> dict)
     {
-         GameObject newGo = Instantiate(rowPrefab, rowsParent);
-         var texts = newGo.GetComponentsInChildren<Text>();
-          texts[0].text = "1";
+        GameObject newGo = Instantiate(rowPrefab, rowsParent);
+        var texts = newGo.GetComponentsInChildren<Text>();
+         texts[0].text = "1";
          texts[1].text = "e";
 
         // foreach (KeyValuePair<string, UserDataRecord> entry in dict)
@@ -57,8 +57,7 @@ public class HistoryScores : MonoBehaviour
         menu.gameObject.SetActive(false);
         var panelHistory = GameObject.Find("Canvas").transform.Find("History");
         panelHistory.gameObject.SetActive(true);
-        PlayFabManager.GetUserData(this);
-       
+        PlayFabManager.GetUserData(this);      
     }
 
 }

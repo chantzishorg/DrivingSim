@@ -35,10 +35,12 @@ public class PlayFabControls : MonoBehaviour
         loginTab.SetActive(true);
     }
 
- string Encrypt(string pass)
-    {
+   string Encrypt(string pass)
+   {
         System.Security.Cryptography.MD5CryptoServiceProvider x = new System.Security.Cryptography.MD5CryptoServiceProvider();
+        // encodes a set of characters of pass into a sequence of bytes
         byte[] bs = System.Text.Encoding.UTF8.GetBytes(pass);
+        // hash of the password
         bs = x.ComputeHash(bs);
         System.Text.StringBuilder s = new System.Text.StringBuilder();
         foreach(byte b in bs)
@@ -52,7 +54,6 @@ public class PlayFabControls : MonoBehaviour
     {
         var registerRequest = new RegisterPlayFabUserRequest { Email = userEmail.text, Password = Encrypt(userPassword.text), Username = username.text };
         PlayFabClientAPI.RegisterPlayFabUser(registerRequest, RegisterSuccess, RegisterError);
-        
     }
 
     public void RegisterSuccess(RegisterPlayFabUserResult result)
@@ -73,7 +74,6 @@ public class PlayFabControls : MonoBehaviour
         //Debug.Log(userEmailLogin.text);
         //Debug.Log(userPasswordLogin.text);
       //  var request = new LoginWithEmailAddressRequest { Email = "chaim@gmail.com", Password = Encrypt("****")};
-
         PlayFabClientAPI.LoginWithEmailAddress(request, LogInSuccess, LogInError);
     }
 

@@ -6,12 +6,13 @@ using PlayFab.ClientModels;
 using System;
 using UnityEngine.UI;
 
-
+// playfab is a backend platform for games and update in real-time
 public class PlayFabManager : MonoBehaviour
 {
    
     public static void SubmitScore(int playerScore)
     {
+        //update the scores in the data of the user
         PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest
         {
             Statistics = new List<StatisticUpdate> {
@@ -28,16 +29,18 @@ public class PlayFabManager : MonoBehaviour
         Debug.Log("Successfully submitted high score");
     }
 
+    // if there is a error 
     public static void FailureCallback(PlayFabError error)
     {
         Debug.LogWarning("Something went wrong with your API call. Here's some debug information:");
         Debug.LogError(error.GenerateErrorReport());
     }
     
+    // save the date and score in the data of the user 
     public static void SetUserData(int score)
     {
         DateTime nowTime = DateTime.Now;
-
+        //create and update 
         PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
         {
             Data = new Dictionary<string, string>() {
@@ -50,10 +53,12 @@ public class PlayFabManager : MonoBehaviour
             Debug.Log(error.GenerateErrorReport());
         });
     }
+    // return the data of the user
     public static void GetUserData(HistoryScores historyscore)
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest()
         {
+            // keys we want to load
             Keys = null
         }, result => {
             Debug.Log("Got user data:");
@@ -65,8 +70,6 @@ public class PlayFabManager : MonoBehaviour
         });
     }
     
-    
-
     /*
     static void GetPlayerProfile(string playFabId)
     {

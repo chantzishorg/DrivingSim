@@ -13,6 +13,6 @@ public class NoEntranceUpdateModel : MonoBehaviour
         float direction_z = transform.GetChild(0).position[2];
         float vector_x = direction_x - noentrance_x;
         float vector_z = direction_z - noentrance_z;
-        App.AddNoEntrance(noentrance_x, noentrance_z, transform.localScale[2], vector_x, vector_z);
+        viewModel.AddNoEntrance(noentrance_x, noentrance_z, transform.localScale[2], vector_x, vector_z);
     }
 }

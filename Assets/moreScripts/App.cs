@@ -376,7 +376,7 @@ public class App : MonoBehaviour
 
     }
 
-    static public void EndGame() {
+     public static void EndGame() {
         PlayFabManager.SetUserData(score);
-    }
+     }
 }

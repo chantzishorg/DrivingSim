@@ -13,6 +13,6 @@ public class NoValidDirectionUpdateModel : MonoBehaviour
         float direction_z = transform.GetChild(0).position[2];
         float vector_x = direction_x - NoValidDirection_x;
         float vector_z = direction_z - NoValidDirection_z;
-        App.AddnoValidDirectionVector(NoValidDirection_x, NoValidDirection_z, transform.localScale[2], vector_x, vector_z);
+        viewModel.AddnoValidDirectionVector(NoValidDirection_x, NoValidDirection_z, transform.localScale[2], vector_x, vector_z);
     }
 }

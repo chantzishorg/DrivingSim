@@ -8,7 +8,6 @@ public class LastSign : MonoBehaviour
 {
     public static void loadImage(string fileName, bool isInstruction)
     {
-
         string nameImageObject;
         if (isInstruction == true)
         {

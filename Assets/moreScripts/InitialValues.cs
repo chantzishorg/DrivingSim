@@ -8,6 +8,6 @@ public class InitialValues : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        App.SetInitialSpeed(initialSpeed);
+        viewModel.SetInitialSpeed(initialSpeed);
     }
 }

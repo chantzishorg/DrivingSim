@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// class that reperesents a car not the player's
 public class NPCCar : MonoBehaviour
 {
+    // returns the vector of the car
     public static Vector2 yRotation2Tangent(float angle)
     {
         angle = angle * Mathf.PI / 180;
@@ -12,6 +14,6 @@ public class NPCCar : MonoBehaviour
     void Start()
     {
         var vector = yRotation2Tangent(transform.rotation.eulerAngles.y);
-        App.AddNpcCars(transform.position.x, transform.position.z,vector);
+        viewModel.AddNpcCars(transform.position.x, transform.position.z,vector);
     }
 }

@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour
     }
     public void QuitGame()
     {
+        viewModel.EndGame();
         Application.Quit();
     }
 }

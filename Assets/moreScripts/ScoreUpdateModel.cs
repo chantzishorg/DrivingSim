@@ -14,6 +14,6 @@ public class ScoreUpdateModel : MonoBehaviour
         float direction_z = transform.GetChild(0).position[2];
         float vector_x = direction_x - score_x;
         float vector_z = direction_z - score_z;
-        App.AddScoreVector(score_x, score_z, transform.localScale[2], vector_x, vector_z,score);
+        viewModel.AddScoreVector(score_x, score_z, transform.localScale[2], vector_x, vector_z,score);
     }
 }

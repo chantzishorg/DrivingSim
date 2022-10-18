@@ -16,10 +16,6 @@ public class InstructionUpdateModel : MonoBehaviour
         float direction_z = transform.GetChild(0).position[2];
         float vector_x = direction_x - directionTurnLine_x;
         float vector_z = direction_z - directionTurnLine_z;
-        //InstructionDirection direction = (InstructionDirection)Enum.Parse(typeof(InstructionDirection), directionTurn, true);
-        //Debug.Log(direction);
-        //Debug.Log($"directionTurnLine_x: {directionTurnLine_x}, directionTurnLine_z: {directionTurnLine_z}, transform.localScale[2]: {transform.localScale[2]}," +
-        //$" vector_x: {vector_x}, vector_z: {vector_z}, instruction: {instruction}");
-        App.AddDirectionInstruction(directionTurnLine_x, directionTurnLine_z, transform.localScale[2], vector_x, vector_z, instruction);
+        viewModel.AddDirectionInstruction(directionTurnLine_x, directionTurnLine_z, transform.localScale[2], vector_x, vector_z, instruction);
     }
 }

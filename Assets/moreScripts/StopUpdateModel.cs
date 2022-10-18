@@ -13,6 +13,6 @@ public class StopUpdateModel : MonoBehaviour
         float direction_z = transform.GetChild(0).position[2];
         float vector_x = direction_x - stop_x;
         float vector_z = direction_z - stop_z;
-        App.AddFirstStop(stop_x, stop_z, transform.localScale[2], vector_x, vector_z);
+        viewModel.AddFirstStop(stop_x, stop_z, transform.localScale[2], vector_x, vector_z);
     }
 }

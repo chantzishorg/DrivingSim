@@ -7,8 +7,7 @@ public class Score : MonoBehaviour
 {
     public static void setScore(int score)
     {       
-        var scoreScreen = GameObject.Find("Canvas").transform.Find("valuescore").GetComponent<Text>();
-       
+        var scoreScreen = GameObject.Find("Canvas").transform.Find("valuescore").GetComponent<Text>();   
         scoreScreen.text = score.ToString();
     } 
 }
