@@ -100,7 +100,6 @@ public class viewModel
     {
         if (isRunning)
         {
-            isRunning = false;
             App.MoveCar(x, z, direction);
         }
     }
@@ -109,25 +108,13 @@ public class viewModel
     {
         if (isRunning)
         {
-            isRunning = false;
             App.ReportSpeed(speed);
         }
     }
 
     public static void EndGame()
     {
-        if (isRunning)
-        {
             isRunning = false;
-            App.EndGame();
-        }
+            App.EndGame(); 
     }
-
-    //public static void setTable(Dictionary<string, UserDataRecord> dict)
-    // {
-    //  HistoryScores.setTable(dict);
-    // foreach (KeyValuePair<string, UserDataRecord> entry in dict) {
-    //     Debug.Log($"{entry.Key} {entry.Value.Value}" );
-    // }
-    //  }
 }
