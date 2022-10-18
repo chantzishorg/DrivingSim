@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class HistoryScores : MonoBehaviour
 {
     //debug start
-    /*string Encrypt(string pass)
+    string Encrypt(string pass)
     {
         System.Security.Cryptography.MD5CryptoServiceProvider x = new System.Security.Cryptography.MD5CryptoServiceProvider();
         byte[] bs = System.Text.Encoding.UTF8.GetBytes(pass);
@@ -29,7 +29,7 @@ public class HistoryScores : MonoBehaviour
 
         PlayFabClientAPI.LoginWithEmailAddress(request, null, null);
        
-    }*/
+    }
     //debug end
     // the row
     public GameObject rowPrefab;

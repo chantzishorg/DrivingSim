@@ -28,7 +28,11 @@ public class viewModel
 
     public static void setScore(int score)
     {
-        Score.setScore(score);
+        Statistics.setScore(score);
+    }
+    public static void setSpeed(float speed)
+    {
+        Statistics.setSpeed(Mathf.RoundToInt(speed));
     }
 
     public static void SetRoadsLocation(List<List<Vector3>> allRoadsNodes)

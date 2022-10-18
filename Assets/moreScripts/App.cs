@@ -357,6 +357,7 @@ public class App : MonoBehaviour
     }
     public static void ReportSpeed(float speed)
     {
+        viewModel.setSpeed(speed);
         // if the speed 0 the car stops
         if (speed < 1)
         {
