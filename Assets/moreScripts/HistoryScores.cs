@@ -5,7 +5,7 @@ using PlayFab;
 using PlayFab.ClientModels;
 using System;
 using UnityEngine.UI;
-
+using TMPro;
 
 public class HistoryScores : MonoBehaviour
 {
@@ -50,7 +50,7 @@ public class HistoryScores : MonoBehaviour
                 return;
             }
             var newGo = table.GetChild(i++);
-            var texts = newGo.GetComponentsInChildren<Text>();
+            var texts = newGo.GetComponentsInChildren<TextMeshProUGUI>();
             texts[0].text = entry.Key;
             texts[1].text = entry.Value.Value;
         }
