@@ -6,6 +6,8 @@ using PlayFab.ClientModels;
 using System;
 using UnityEngine.UI;
 
+public delegate void UserDataDelegate(Dictionary<string, UserDataRecord> dict);
+
 // playfab is a backend platform for games and update in real-time
 public class PlayFabManager : MonoBehaviour
 {
@@ -54,7 +56,7 @@ public class PlayFabManager : MonoBehaviour
         });
     }
     // return the data of the user
-    public static void GetUserData(HistoryScores historyscore)
+    public static void GetUserData(UserDataDelegate setTable)
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest()
         {
@@ -63,7 +65,7 @@ public class PlayFabManager : MonoBehaviour
         }, result => {
             Debug.Log("Got user data:");
             if (result.Data == null) Debug.Log("null");
-            else historyscore.setTable(result.Data);
+            else setTable(result.Data);
         }, error => {
             Debug.Log("Got error retrieving user data:");
             Debug.Log(error.GenerateErrorReport());

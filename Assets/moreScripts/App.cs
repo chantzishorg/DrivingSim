@@ -9,6 +9,12 @@ enum PassingCode : ushort
     OppositeDirection = 1,
     SameDirection = 2,
 }
+public enum LightColor : ushort
+{
+    Green = 0,
+    Yellow = 1,
+    Red = 2,
+}
 
 public enum InstructionDirection : ushort
 {
@@ -26,6 +32,31 @@ public class MyPoint
     }
 }
 */
+public delegate void OnLightChange(int index, LightColor color);
+public class TrafficLightIntersection
+{
+    public (DirectedLine pre, DirectedLine passing, LightColor color)[] trafficLights =
+        new (DirectedLine pre, DirectedLine passing, LightColor color)[4];
+    public OnLightChange onLightChange;
+    public TrafficLightIntersection((DirectedLine pre, DirectedLine passing) trafficLight1,
+        (DirectedLine pre, DirectedLine passing) trafficLight2,
+        (DirectedLine pre, DirectedLine passing) trafficLight3,
+        (DirectedLine pre, DirectedLine passing) trafficLight4,
+        OnLightChange onLightChange
+        )
+    {
+        trafficLights[0].pre = trafficLight1.pre;
+        trafficLights[1].pre = trafficLight2.pre;
+        trafficLights[2].pre = trafficLight3.pre;
+        trafficLights[3].pre = trafficLight4.pre;
+        trafficLights[0].passing = trafficLight1.passing;
+        trafficLights[1].passing = trafficLight2.passing;
+        trafficLights[2].passing = trafficLight3.passing;
+        trafficLights[3].passing = trafficLight4.passing;
+        this.onLightChange = onLightChange;
+    }
+}
+
 public class DirectedLine
 {
     //public MyPoint middle;
@@ -114,15 +145,37 @@ public class App : MonoBehaviour
     private static List<DirectedLine> noValidDirectionVector = new List<DirectedLine>();
     private static List<DirectedLine> ValidDirectionVector = new List<DirectedLine>();
     private static List<scoreSpline> scoreVector = new List<scoreSpline>();
-    private static Vector2 carLocation = new Vector2(-1f,-1f);
+    private static Vector2 carLocation = new Vector2(-1f, -1f);
     private static float currentSpeedLimit;
     private static RoadsModel roadsModel = null;
     private static List<(Vector2, Vector2)> npcCars = new List<(Vector2, Vector2)>();
+    private static List<TrafficLightIntersection> trafficLightIntersections = new List<TrafficLightIntersection>();
+    private int currentGreenRoad = 0;
 
+    public static void AddTrafficLights(
+        (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl1,
+        (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl2,
+        (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl3,
+        (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl4,
+        OnLightChange onLightChange
+        )
+    {
+        var trafficLight1 = (new DirectedLine(tl1.middle1.x, tl1.middle1.y, tl1.width1, tl1.vec1.x, tl1.vec1.y),
+            new DirectedLine(tl1.middle2.x, tl1.middle2.y, tl1.width2, tl1.vec2.x, tl1.vec2.y));
+        var trafficLight2 = (new DirectedLine(tl2.middle1.x, tl2.middle1.y, tl2.width1, tl2.vec1.x, tl2.vec1.y),
+            new DirectedLine(tl2.middle2.x, tl2.middle2.y, tl2.width2, tl2.vec2.x, tl2.vec2.y));
+        var trafficLight3 = (new DirectedLine(tl3.middle1.x, tl3.middle1.y, tl3.width1, tl3.vec1.x, tl3.vec1.y),
+            new DirectedLine(tl3.middle2.x, tl3.middle2.y, tl3.width2, tl3.vec2.x, tl3.vec2.y));
+        var trafficLight4 = (new DirectedLine(tl4.middle1.x, tl4.middle1.y, tl4.width1, tl4.vec1.x, tl4.vec1.y),
+            new DirectedLine(tl4.middle2.x, tl4.middle2.y, tl4.width2, tl4.vec2.x, tl4.vec2.y));
+        trafficLightIntersections.Add(
+            new TrafficLightIntersection(trafficLight1, trafficLight2, trafficLight3, trafficLight4, onLightChange)
+            );
+    }
     public static void AddNpcCars(float pX, float pY, Vector2 vector)
     {
         Vector2 point = new Vector2(pX, pY);
-        npcCars.Add((point,vector));
+        npcCars.Add((point, vector));
     }
 
     public static void SetRoadsLocation(List<List<Vector3>> allRoadsNodes)
@@ -155,7 +208,7 @@ public class App : MonoBehaviour
         SpeedLimitList.Add(new SpeedLimit(new DirectedLine(x, z, width, vector_x, vector_z), newSpeedLimit, oldSpeedLimit));
     }
 
-    public static void AddFirstStop(float x, float z, float width, float vector_x, float vector_z) 
+    public static void AddFirstStop(float x, float z, float width, float vector_x, float vector_z)
     {
         stopFirstVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
     }
@@ -247,7 +300,7 @@ public class App : MonoBehaviour
             PassingCode result = checkCross(oldLocation, carLocation, signVector[i].signLine);
             if (result == PassingCode.SameDirection)
             {
-                viewModel.loadImage(signVector[i].nameImage,false);
+                viewModel.loadImage(signVector[i].nameImage, false);
             }
         }
 
@@ -294,9 +347,9 @@ public class App : MonoBehaviour
                 viewModel.setScore(score);
             }
         }
-        foreach((Vector2 point, Vector2 vector) npcCar in npcCars)
+        foreach ((Vector2 point, Vector2 vector) npcCar in npcCars)
         {
-            if (Collision.isIntersection(carLocation,npcCar.point,direction,npcCar.vector))
+            if (Collision.isIntersection(carLocation, npcCar.point, direction, npcCar.vector))
             {
                 viewModel.Reportfailure("You collide with car!");
             }
@@ -307,7 +360,7 @@ public class App : MonoBehaviour
         // if the speed 0 the car stops
         if (speed < 1)
         {
-           // Debug.Log("the speed is 0");
+            // Debug.Log("the speed is 0");
             isStop = true;
         }
         if (speed > currentSpeedLimit)
@@ -367,19 +420,6 @@ public class App : MonoBehaviour
         return PassingCode.SameDirection;
     }
 
-    void Start()
-    {
-        //viewModel.loadImage("speedLimit30.png");
-        viewModel.setScore(score);
-        Time.timeScale = 1f;
-        SetInitialSpeed(initialSpeedLimit);
-
-    }
-
-     public static void EndGame() {
-        PlayFabManager.SetUserData(score);
-     }
-
     void Awake()
     {
         score = 0;
@@ -398,5 +438,60 @@ public class App : MonoBehaviour
         carLocation = new Vector2(-1f, -1f);
         roadsModel = null;
         npcCars = new List<(Vector2, Vector2)>();
+        trafficLightIntersections = new List<TrafficLightIntersection>();
+        currentGreenRoad = 0;
+    }
+
+    void Start()
+    {
+        //viewModel.loadImage("speedLimit30.png");
+        viewModel.setScore(score);
+        Time.timeScale = 1f;
+        SetInitialSpeed(initialSpeedLimit);
+        Invoke("flipRoadGreen", 1f);
+
+    }
+
+    static public void EndGame()
+    {
+        PlayFabManager.SetUserData(score);
+    }
+
+    void flipRoadGreen()
+    {
+        foreach (var trafficLightIntersection in trafficLightIntersections)
+        {
+            trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Green);
+            trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Green);
+        }
+        currentGreenRoad = (currentGreenRoad + 2) % 4;
+        foreach (var trafficLightIntersection in trafficLightIntersections)
+        {
+            trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Red);
+            trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Red);
+        }
+        Invoke("flipRoadYellow", 10f);
+    }
+    void flipRoadYellow()
+    {
+        currentGreenRoad = (currentGreenRoad + 2) % 4;
+        foreach (var trafficLightIntersection in trafficLightIntersections)
+        {
+            trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Yellow);
+            trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Yellow);
+        }
+        Invoke("flipRoadRed", 1f);
+    }
+    void flipRoadRed()
+    {
+        foreach (var trafficLightIntersection in trafficLightIntersections)
+        {
+            trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Red);
+            trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Red);
+        }
+        currentGreenRoad = (currentGreenRoad + 2) % 4;
+        Invoke("flipRoadGreen", 1f);
     }
 }
+
+

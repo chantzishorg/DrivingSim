@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Collision 
 {
-    private static List<Vector2> caluclateRectangle(Vector2 centerPoint, Vector2 vector, float width, float length)
+    private static (Vector2, Vector2, Vector2, Vector2) caluclateRectangle(Vector2 centerPoint, Vector2 vector, float width, float length)
     {
-        List<Vector2> pointRectangle = new List<Vector2>();
         // vector_m = slope of the vector
         double vector_m;
         // check if vector_x isnt zero
@@ -16,7 +15,7 @@ public class Collision
         }
         else vector_m = double.PositiveInfinity;
         //calucate equation, y=mx+b , b=y-mx
-        //double vector_b = centerPoint.y - vector_m * centerPoint.x;
+        // double vector_b = centerPoint.y - vector_m * centerPoint.x;
         //calucate equation line perpendicular that throught the center point  
         double m;
         if (double.IsInfinity(vector_m))
@@ -39,26 +38,20 @@ public class Collision
         //yPoint = m * centerPoint.x + b;
         float distance = width / 2;
         // find two middle points on two lines of rectangle
-        List<Vector2> twoMiddlePoints = TwoPoints(centerPoint, distance, m);
-        Vector2 firstMiddlePoint = twoMiddlePoints[0];
-        Vector2 secondMiddlePoint = twoMiddlePoints[1];
+        var twoMiddlePoints = TwoPoints(centerPoint, distance, m);
+        Vector2 firstMiddlePoint = twoMiddlePoints.Item1;
+        Vector2 secondMiddlePoint = twoMiddlePoints.Item2;
         distance = length / 2;
         //two corners of the rectangle
-        List<Vector2> twoPointsOfRectangle = TwoPoints(firstMiddlePoint, distance, vector_m);
-        List<Vector2> otherPointsOfRectangle = TwoPoints(secondMiddlePoint, distance, vector_m);
+        var twoPointsOfRectangle = TwoPoints(firstMiddlePoint, distance, vector_m);
+        var otherPointsOfRectangle = TwoPoints(secondMiddlePoint, distance, vector_m);
         // lentghs: pointRectangle[0]_pointRectangle[1], pointRectangle[2]_pointRectangle[3]
         // widths: pointRectangle[0]_pointRectangle[2], pointRectangle[1]_pointRectangle[3]
-        pointRectangle.Add(twoPointsOfRectangle[0]);
-        pointRectangle.Add(twoPointsOfRectangle[1]);
-        pointRectangle.Add(otherPointsOfRectangle[0]);
-        pointRectangle.Add(otherPointsOfRectangle[1]);
-        return pointRectangle;
-
+        return (twoPointsOfRectangle.Item1, twoPointsOfRectangle.Item2, otherPointsOfRectangle.Item1, otherPointsOfRectangle.Item2);
     }
     // function find points at a given distance on a line of given slope
-    private static List<Vector2> TwoPoints(Vector2 centerPoint, float distance, double m)
+    private static (Vector2, Vector2) TwoPoints(Vector2 centerPoint, float distance, double m)
     {
-        List<Vector2> twoPointLines = new List<Vector2>();
         // 
         Vector2 p1 = new Vector2();
         Vector2 p2 = new Vector2();
@@ -95,13 +88,11 @@ public class Collision
         }
 
         // Print the first Point
-        Debug.Log(p1.x + ", " + p1.y);
+        //Debug.Log(p1.x + ", " + p1.y);
 
         // Print the second Point
-        Debug.Log(p2.x + ", " + p2.y);
-        twoPointLines.Add(p1);
-        twoPointLines.Add(p2);
-        return twoPointLines;
+        //Debug.Log(p2.x + ", " + p2.y);
+        return (p1, p2);
     }
 
     // function that find the instersction point between two lines 
@@ -151,12 +142,12 @@ public class Collision
         return BetweenTwoPoints(A, B, p) && BetweenTwoPoints(C, D, p);
     }
 
-    private static bool crossRectangles(List<Vector2> rectangle1, List<Vector2> rectangle2)
+    private static bool crossRectangles((Vector2, Vector2, Vector2, Vector2) rectangle1, (Vector2, Vector2, Vector2, Vector2) rectangle2)
     {
         // check for every two points from rectangle1 and rectangle 2 if the lines intersection
         // if line intersection check if the point between two corners of the rectangle
-        (Vector2, Vector2)[] rect1 = { (rectangle1[0], rectangle1[1]), (rectangle1[0], rectangle1[2]), (rectangle1[2], rectangle1[3]), (rectangle1[1], rectangle1[3]) };
-        (Vector2, Vector2)[] rect2 = { (rectangle2[0], rectangle2[1]), (rectangle2[0], rectangle2[2]), (rectangle2[2], rectangle2[3]), (rectangle2[1], rectangle2[3]) };
+        (Vector2, Vector2)[] rect1 = { (rectangle1.Item1, rectangle1.Item2), (rectangle1.Item1, rectangle1.Item3), (rectangle1.Item3, rectangle1.Item4), (rectangle1.Item2, rectangle1.Item4) };
+        (Vector2, Vector2)[] rect2 = { (rectangle2.Item1, rectangle2.Item2), (rectangle2.Item1, rectangle2.Item3), (rectangle2.Item3, rectangle2.Item4), (rectangle2.Item2, rectangle2.Item4) };
         foreach (var side1 in rect1)
         {
             foreach (var side2 in rect2)
