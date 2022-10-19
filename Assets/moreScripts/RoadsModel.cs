@@ -279,7 +279,7 @@ public class RoadsModel
         return null;
     }
 
-    public void MoveCar(float x, float z, Vector2 direction)
+    public string MoveCar(float x, float z, Vector2 direction)
     {
         Vector2 oldLocation = carLocation;
         carLocation = new Vector2(x, z);
@@ -292,12 +292,12 @@ public class RoadsModel
         carSquare = carSquare?.calculate(oldLocation, carLocation);
         if (carSquare == null)
         {
-            Debug.Log("Car outside of the road");
+            return "Car outside of the road";
             //debug
             //Time.timeScale = 0;
             //stop = true;
             //
-            return;
+            //return;
         }
         /*if( !(isInsisdeTriangle(carLocation, carSquare.point_1, carSquare.point_2, carSquare.point_3) || isInsisdeTriangle(carLocation, carSquare.point_1, carSquare.point_3, carSquare.point_4)))
         {
@@ -334,7 +334,7 @@ public class RoadsModel
                     if((sep.isInRightSide(carLocation) && !sep.isInRoadDirection(direction)) || 
                         (!sep.isInRightSide(carLocation) && sep.isInRoadDirection(direction)))
                     {
-                        Debug.Log("Car in opposite direction");
+                        return "Car in opposite direction";
                         //debug
                         /*
                         Debug.Log($"sep.A {sep.A},sep.B {sep.B},sep.Direction ({sep.Direction.x}, {sep.Direction.y}), carLocation {carLocation}, direction {direction}");
@@ -349,6 +349,7 @@ public class RoadsModel
                 }
             }
         }
+        return "Ok";
     }
     
     public RoadsModel(List<List<Vector3>> allRoadsNodes)

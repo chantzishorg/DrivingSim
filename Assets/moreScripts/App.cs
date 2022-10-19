@@ -232,7 +232,12 @@ public class App : MonoBehaviour
     }
     public static void MoveCar(float x, float z, Vector2 direction)
     {
-        roadsModel.MoveCar(x, z, direction);
+        var textResult = roadsModel.MoveCar(x, z, direction);
+        if (textResult.ToLower() != "ok")
+        {
+            viewModel.Reportfailure(textResult);
+        }
+
         Vector2 oldLocation = carLocation;
         carLocation = new Vector2(x, z);
         for (int i = 0; i < NoEntranceVector.Count; i++)
@@ -298,14 +303,16 @@ public class App : MonoBehaviour
             {
                 if (turnDirectionVector[i].turnDirection == InstructionDirection.turnRight)
                 {
-                    viewModel.loadImage("Assets/moreSigns/turnRight.png", true);
+                    viewModel.loadImage("right", true);
                 }
                 else
                 {
-                    viewModel.loadImage("Assets/moreSigns/turnLeft.png", true);
+                    viewModel.loadImage("left", true);
                 }
             }
         }
+
+        //loop over the noValidDirectionVector
         for (int i = 0; i < noValidDirectionVector.Count; i++)
         {
             PassingCode result = checkCross(oldLocation, carLocation, noValidDirectionVector[i]);
@@ -315,6 +322,8 @@ public class App : MonoBehaviour
                 //viewModel.clearImage();
             }
         }
+
+        //loop over the ValidDirectionVector
         for (int i = 0; i < ValidDirectionVector.Count; i++)
         {
             PassingCode result = checkCross(oldLocation, carLocation, ValidDirectionVector[i]);
@@ -323,6 +332,8 @@ public class App : MonoBehaviour
                 viewModel.clearImage(true);
             }
         }
+
+        //loop over the scoreVector
         for (int i = 0; i < scoreVector.Count; i++)
         {
             PassingCode result = checkCross(oldLocation, carLocation, scoreVector[i].scoreLine);
@@ -332,6 +343,8 @@ public class App : MonoBehaviour
                 viewModel.setScore(score);
             }
         }
+
+        //loop over the npcCars
         foreach ((Vector2 point, Vector2 vector) npcCar in npcCars)
         {
             if (Collision.isIntersection(carLocation, npcCar.point, direction, npcCar.vector))
@@ -339,6 +352,8 @@ public class App : MonoBehaviour
                 viewModel.Reportfailure("You collide with car!");
             }
         }
+
+        //loop over the traffic lights
     }
     public static void ReportSpeed(float speed)
     {
