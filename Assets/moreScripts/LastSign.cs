@@ -45,7 +45,7 @@ public class LastSign : MonoBehaviour
 {
     public static void loadImage(string fileName, bool isInstruction)
     {
-        if (isInstruction == true)
+        if (isInstruction)
         {
             loadInstructionImage(fileName);
         }
@@ -70,13 +70,11 @@ public class LastSign : MonoBehaviour
     }
     public static void loadSignImage(string fileName)
     {
-        string nameImageObject = "imageSign";
-
-        //string fullFileName= Path.Combine("Assets/moreSigns/", fileName);
-        var myImage = GameObject.Find("Canvas").transform.Find(nameImageObject).GetComponent<RawImage>();
-        myImage.gameObject.SetActive(true);
+        var myImage = GameObject.Find("Canvas").transform.Find("imageSign").GetComponent<RawImage>();
         if (File.Exists(fileName))
         {
+            clearImage(false);
+            myImage.gameObject.SetActive(true);
             byte[] imageData = File.ReadAllBytes(fileName);
             (int width, int height) dims = PNGImage.getPngDims(imageData);
             //Debug.Log(dims);

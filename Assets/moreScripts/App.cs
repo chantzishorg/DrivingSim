@@ -23,16 +23,19 @@ public enum InstructionDirection : ushort
 }
 
 public delegate void OnLightChange(int index, LightColor color);
+public delegate void OnAreaEnter(bool isEnter, int index);
 public class TrafficLightIntersection
 {
     public (DirectedLine pre, DirectedLine passing, LightColor color)[] trafficLights =
         new (DirectedLine pre, DirectedLine passing, LightColor color)[4];
     public OnLightChange onLightChange;
+    public OnAreaEnter onAreaEnter;
     public TrafficLightIntersection((DirectedLine pre, DirectedLine passing) trafficLight1,
         (DirectedLine pre, DirectedLine passing) trafficLight2,
         (DirectedLine pre, DirectedLine passing) trafficLight3,
         (DirectedLine pre, DirectedLine passing) trafficLight4,
-        OnLightChange onLightChange
+        OnLightChange onLightChange,
+        OnAreaEnter onAreaEnter
         )
     {
         trafficLights[0].pre = trafficLight1.pre;
@@ -44,6 +47,7 @@ public class TrafficLightIntersection
         trafficLights[2].passing = trafficLight3.passing;
         trafficLights[3].passing = trafficLight4.passing;
         this.onLightChange = onLightChange;
+        this.onAreaEnter = onAreaEnter;
     }
 }
 
@@ -147,7 +151,8 @@ public class App : MonoBehaviour
         (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl2,
         (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl3,
         (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl4,
-        OnLightChange onLightChange
+        OnLightChange onLightChange,
+        OnAreaEnter onAreaEnter
         )
     {
         var trafficLight1 = (new DirectedLine(tl1.middle1.x, tl1.middle1.y, tl1.width1, tl1.vec1.x, tl1.vec1.y),
@@ -159,7 +164,7 @@ public class App : MonoBehaviour
         var trafficLight4 = (new DirectedLine(tl4.middle1.x, tl4.middle1.y, tl4.width1, tl4.vec1.x, tl4.vec1.y),
             new DirectedLine(tl4.middle2.x, tl4.middle2.y, tl4.width2, tl4.vec2.x, tl4.vec2.y));
         trafficLightIntersections.Add(
-            new TrafficLightIntersection(trafficLight1, trafficLight2, trafficLight3, trafficLight4, onLightChange)
+            new TrafficLightIntersection(trafficLight1, trafficLight2, trafficLight3, trafficLight4, onLightChange, onAreaEnter)
             );
     }
     public static void AddNpcCars(float pX, float pY, Vector2 vector)
@@ -354,6 +359,31 @@ public class App : MonoBehaviour
         }
 
         //loop over the traffic lights
+        foreach(var inter in trafficLightIntersections)
+        {
+            for(var i=0; i < inter.trafficLights.Length; i++)
+            {
+                if (!float.IsNaN(inter.trafficLights[i].passing.x))
+                {
+                    PassingCode result = checkCross(oldLocation, carLocation, inter.trafficLights[i].passing);
+                    if (result == PassingCode.SameDirection)
+                    {
+                        if (inter.trafficLights[i].color == LightColor.Red)
+                            viewModel.Reportfailure("You drove in red!");
+                        else
+                            inter.onAreaEnter(false, i);
+                    }
+                }
+                if (!float.IsNaN(inter.trafficLights[i].pre.x))
+                {
+                    var result = checkCross(oldLocation, carLocation, inter.trafficLights[i].pre);
+                    if (result == PassingCode.SameDirection)
+                    {
+                        inter.onAreaEnter(true, i);
+                    }
+                }
+            }
+        }
     }
     public static void ReportSpeed(float speed)
     {
@@ -458,12 +488,16 @@ public class App : MonoBehaviour
     {
         foreach (var trafficLightIntersection in trafficLightIntersections)
         {
+            trafficLightIntersection.trafficLights[currentGreenRoad].color =LightColor.Green;
+            trafficLightIntersection.trafficLights[currentGreenRoad + 1].color = LightColor.Green;
             trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Green);
             trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Green);
         }
         currentGreenRoad = (currentGreenRoad + 2) % 4;
         foreach (var trafficLightIntersection in trafficLightIntersections)
         {
+            trafficLightIntersection.trafficLights[currentGreenRoad].color = LightColor.Red;
+            trafficLightIntersection.trafficLights[currentGreenRoad + 1].color = LightColor.Red;
             trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Red);
             trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Red);
         }
@@ -474,6 +508,8 @@ public class App : MonoBehaviour
         currentGreenRoad = (currentGreenRoad + 2) % 4;
         foreach (var trafficLightIntersection in trafficLightIntersections)
         {
+            trafficLightIntersection.trafficLights[currentGreenRoad].color = LightColor.Yellow;
+            trafficLightIntersection.trafficLights[currentGreenRoad + 1].color = LightColor.Yellow;
             trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Yellow);
             trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Yellow);
         }
@@ -483,6 +519,8 @@ public class App : MonoBehaviour
     {
         foreach (var trafficLightIntersection in trafficLightIntersections)
         {
+            trafficLightIntersection.trafficLights[currentGreenRoad].color = LightColor.Red;
+            trafficLightIntersection.trafficLights[currentGreenRoad + 1].color = LightColor.Red;
             trafficLightIntersection.onLightChange(currentGreenRoad, LightColor.Red);
             trafficLightIntersection.onLightChange(currentGreenRoad + 1, LightColor.Red);
         }

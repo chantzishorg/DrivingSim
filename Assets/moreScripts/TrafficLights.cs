@@ -13,6 +13,9 @@ public class TrafficLights : MonoBehaviour
     public GameObject thirdLightPass;
     public GameObject fourthLightPre;
     public GameObject fourthLightPass;
+
+    private int activeIndex = 0;
+    private bool active = false;
     //private static Light nullLight = new Light();
     private List<(Light green, Light red, Light yellow, MeshRenderer MR)> trafficLights = new List<(Light green, Light red, Light yellow, MeshRenderer MR)>();
     //private int currentRoad = 0;
@@ -52,7 +55,8 @@ public class TrafficLights : MonoBehaviour
          GetParameters(thirdLightPass).middle, GetParameters(thirdLightPass).width, GetParameters(thirdLightPass).vec),
         (GetParameters(fourthLightPre).middle, GetParameters(fourthLightPre).width, GetParameters(fourthLightPre).vec,
          GetParameters(fourthLightPass).middle, GetParameters(fourthLightPass).width, GetParameters(fourthLightPass).vec),
-        onLightChange
+        onLightChange,
+        setActive
         );
     //Invoke("flipRoadGreen", 2f);
 }
@@ -94,6 +98,10 @@ public class TrafficLights : MonoBehaviour
             trafficLights[greenRoad].yellow.enabled = false;
             trafficLights[greenRoad].MR.material.mainTextureOffset = new Vector2(0.667f, 0f);
         }
+        if (active && greenRoad == activeIndex)
+        {
+            viewModel.loadImage("Assets/moreSigns/green.png", false);
+        }
     }
     public void setRed(int redRoad)
     {
@@ -104,6 +112,10 @@ public class TrafficLights : MonoBehaviour
             trafficLights[redRoad].yellow.enabled = false;
             trafficLights[redRoad].MR.material.mainTextureOffset = new Vector2(0f, 0f);
         }
+        if (active && redRoad == activeIndex)
+        {
+            viewModel.loadImage("Assets/moreSigns/red.png", false);
+        }
     }
     public void setYellow(int yellowRoad)
     {
@@ -113,6 +125,10 @@ public class TrafficLights : MonoBehaviour
             trafficLights[yellowRoad].red.enabled = false;
             trafficLights[yellowRoad].yellow.enabled = true;
             trafficLights[yellowRoad].MR.material.mainTextureOffset = new Vector2(0.334f, 0f);
+        }
+        if (active && yellowRoad == activeIndex)
+        {
+            viewModel.loadImage("Assets/moreSigns/yellow.png", false);
         }
     }
 
@@ -133,5 +149,36 @@ public class TrafficLights : MonoBehaviour
                 // not reachable
                 break;
         }
+    }
+
+    public void setActive(bool active, int index = 0)
+    {
+        if (active)
+        {
+            activeIndex = index;
+            this.active = active;
+            viewModel.loadImage(GetLight(index), false);
+        }
+        else
+        {
+            this.active = active;
+            viewModel.clearImage(false);
+        }
+    }
+    private string GetLight(int idx)
+    {
+        if (trafficLights[idx].MR.material.mainTextureOffset.x == 0.667f /*.green.enabled*/)
+        {
+            return "Assets/moreSigns/green.png";
+        }
+        if (trafficLights[idx].MR.material.mainTextureOffset.x == 0f /*.red.enabled*/)
+        {
+            return "Assets/moreSigns/red.png";
+        }
+        if (trafficLights[idx].MR.material.mainTextureOffset.x == 0.334f /*.yellow.enabled*/)
+        {
+            return "Assets/moreSigns/yellow.png";
+        }
+        return "red";
     }
 }
