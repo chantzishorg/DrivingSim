@@ -100,7 +100,24 @@ public class viewModel
         App.AddScoreVector(x, z, width, vector_x, vector_z, score);
     }
 
-    public static void MoveCar(float x, float z, Vector2 direction)
+    public static void AddValidSignVector(float x, float z, float width, float vector_x, float vector_z)
+    {
+        App.AddValidSignVector(x, z, width, vector_x, vector_z);
+    }
+
+    public static void AddTrafficLights(
+       (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl1,
+       (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl2,
+       (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl3,
+       (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl4,
+       OnLightChange onLightChange,
+       OnAreaEnter onAreaEnter
+       )
+    {
+        App.AddTrafficLights(tl1, tl2, tl3, tl4, onLightChange, onAreaEnter);
+    }
+
+        public static void MoveCar(float x, float z, Vector2 direction)
     {
         if (isRunning)
         {

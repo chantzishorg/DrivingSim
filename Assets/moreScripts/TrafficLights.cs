@@ -46,7 +46,7 @@ public class TrafficLights : MonoBehaviour
             else trafficLights.Add((null, null, null, null));
         }
 
-        App.AddTrafficLights(
+        viewModel.AddTrafficLights(
         (GetParameters(firstLightPre).middle, GetParameters(firstLightPre).width, GetParameters(firstLightPre).vec,
          GetParameters(firstLightPass).middle, GetParameters(firstLightPass).width, GetParameters(firstLightPass).vec),
         (GetParameters(secondLightPre).middle, GetParameters(secondLightPre).width, GetParameters(secondLightPre).vec,

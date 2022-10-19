@@ -132,6 +132,7 @@ public class App : MonoBehaviour
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
+    private static List<DirectedLine> ValidSignVector = new List<DirectedLine>();
     private static List<DirectedLine> stopSecondVector = new List<DirectedLine>();
     // list of the turn lines
     private static List<TurnInstruction> turnDirectionVector = new List<TurnInstruction>();
@@ -231,6 +232,10 @@ public class App : MonoBehaviour
     {
         ValidDirectionVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
     }
+    public static void AddValidSignVector(float x, float z, float width, float vector_x, float vector_z)
+    {
+        ValidSignVector.Add(new DirectedLine(x, z, width, vector_x, vector_z));
+    }
     public static void AddScoreVector(float x, float z, float width, float vector_x, float vector_z, int score)
     {
         scoreVector.Add(new scoreSpline(new DirectedLine(x, z, width, vector_x, vector_z), score));
@@ -299,6 +304,17 @@ public class App : MonoBehaviour
                 viewModel.loadImage(signVector[i].nameImage, false);
             }
         }
+
+        //loop over the ValidSignVector
+        for (int i = 0; i < ValidSignVector.Count; i++)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, ValidSignVector[i]);
+            if (result == PassingCode.SameDirection)
+            {
+                viewModel.clearImage(false);
+            }
+        }
+
 
         //loop over the turnDirectionVector
         for (int i = 0; i < turnDirectionVector.Count; i++)
@@ -463,6 +479,7 @@ public class App : MonoBehaviour
         signVector = new List<Sign>();
         noValidDirectionVector = new List<DirectedLine>();
         ValidDirectionVector = new List<DirectedLine>();
+        ValidSignVector = new List<DirectedLine>();
         scoreVector = new List<scoreSpline>();
         carLocation = new Vector2(-1f, -1f);
         roadsModel = null;
