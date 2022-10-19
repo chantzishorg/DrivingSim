@@ -52,7 +52,7 @@ public class Collision
     // function find points at a given distance on a line of given slope
     private static (Vector2, Vector2) TwoPoints(Vector2 centerPoint, float distance, double m)
     {
-        // 
+        // p1 and p2 there are the points of a given distance on a line 
         Vector2 p1 = new Vector2();
         Vector2 p2 = new Vector2();
         // Slope is 0, the equation y=number
@@ -86,12 +86,6 @@ public class Collision
             p2.x = centerPoint.x - (float)dx;
             p2.y = centerPoint.y - (float)dy;
         }
-
-        // Print the first Point
-        //Debug.Log(p1.x + ", " + p1.y);
-
-        // Print the second Point
-        //Debug.Log(p2.x + ", " + p2.y);
         return (p1, p2);
     }
 

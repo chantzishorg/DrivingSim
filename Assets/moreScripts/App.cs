@@ -21,17 +21,7 @@ public enum InstructionDirection : ushort
     turnRight = 0,
     turnLeft = 1,
 }
-/*
-public class MyPoint
-{
-    public float x, z;
-    public MyPoint(float x, float z)
-    {
-        this.x = x;
-        this.z = z;
-    }
-}
-*/
+
 public delegate void OnLightChange(int index, LightColor color);
 public class TrafficLightIntersection
 {
@@ -251,10 +241,6 @@ public class App : MonoBehaviour
             if (result == PassingCode.SameDirection)
             {
                 viewModel.Reportfailure("You entered to no entry place!");
-                //viewModel.clearImage();
-                //Debug.Log("game over");
-                //Debug.Log($"{NoEntranceVector[i].x},{NoEntranceVector[i].z},{NoEntranceVector[i].width},{NoEntranceVector[i].vector_x}," +
-                //$"{NoEntranceVector[i].vector_z}");
             }
         }
         for (int i = 0; i < SpeedLimitList.Count; i++)
@@ -310,7 +296,6 @@ public class App : MonoBehaviour
             PassingCode result = checkCross(oldLocation, carLocation, turnDirectionVector[i].turnLine);
             if (result == PassingCode.SameDirection)
             {
-                Debug.Log("turn");
                 if (turnDirectionVector[i].turnDirection == InstructionDirection.turnRight)
                 {
                     viewModel.loadImage("Assets/moreSigns/turnRight.png", true);
@@ -385,8 +370,6 @@ public class App : MonoBehaviour
         // vector_m = slope of the vector of directedLine (in order to calculate -1/vector_m which is the slope of directedLine)
         float vector_m = directedLine.vector_z / directedLine.vector_x;
         // can't calculate -1/0
-        // TODO: probably should check if close enough to zero not exactly equal
-        // if(Mathf.Abs(vector_m) < 0.0001)
         if (vector_m == 0f)
         {
             // if they start and end in the same side
@@ -445,12 +428,10 @@ public class App : MonoBehaviour
 
     void Start()
     {
-        //viewModel.loadImage("speedLimit30.png");
         viewModel.setScore(score);
         Time.timeScale = 1f;
         SetInitialSpeed(initialSpeedLimit);
         Invoke("flipRoadGreen", 1f);
-
     }
 
     static public void EndGame()
