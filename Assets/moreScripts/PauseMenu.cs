@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// class that represents the menu we enter esc
 public class PauseMenu : MonoBehaviour
 {
-
+    // variable that repersents if the game is paused
     public static bool GameIsPauesed = false;
+    //
     public GameObject pauseMenuUi;
     // Update is called once per frame
     void Update()

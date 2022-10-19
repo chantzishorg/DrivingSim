@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class SignUpdateModel : MonoBehaviour
 {
+    // name image of the sign
     public string nameImage;
+
     // Start is called before the first frame update
     void Start()
     {

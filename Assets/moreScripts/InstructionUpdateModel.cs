@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class InstructionUpdateModel : MonoBehaviour
 {
-   // public string directionTurn;
+    // instruction of the direction 
     public InstructionDirection instruction;
+
     // Start is called before the first frame update
     void Start()
     {

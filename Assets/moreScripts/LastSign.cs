@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Drawing;
 
+// class that caluclate the dimentions of the image
 public class PNGImage
 {
     // Tuple<uint, uint>
@@ -38,6 +39,8 @@ public class PNGImage
         return (0, 0);
     }
 }
+
+// class that represents the last sign
 public class LastSign : MonoBehaviour
 {
     public static void loadImage(string fileName, bool isInstruction)

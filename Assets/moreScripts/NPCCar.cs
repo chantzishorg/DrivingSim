@@ -11,6 +11,7 @@ public class NPCCar : MonoBehaviour
         angle = angle * Mathf.PI / 180;
         return new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
     }
+
     void Start()
     {
         var vector = yRotation2Tangent(transform.rotation.eulerAngles.y);

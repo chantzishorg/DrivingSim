@@ -9,33 +9,12 @@ using TMPro;
 
 public class HistoryScores : MonoBehaviour
 {
-    //debug start
-    string Encrypt(string pass)
-    {
-        System.Security.Cryptography.MD5CryptoServiceProvider x = new System.Security.Cryptography.MD5CryptoServiceProvider();
-        byte[] bs = System.Text.Encoding.UTF8.GetBytes(pass);
-        bs = x.ComputeHash(bs);
-        System.Text.StringBuilder s = new System.Text.StringBuilder();
-        foreach (byte b in bs)
-        {
-            s.Append(b.ToString("x2").ToLower());
-        }
-        return s.ToString();
-    }
-    
-    void Start()
-    {
-        var request = new LoginWithEmailAddressRequest { Email = "chaim@gmail.com", Password = Encrypt("****") };
-
-        PlayFabClientAPI.LoginWithEmailAddress(request, null, null);
-       
-    }
-    //debug end
     // the row
     public GameObject rowPrefab;
     // the table
     public Transform rowsParent;
 
+    // update in table the data of user
     public void setTable(Dictionary<string, UserDataRecord> dict)
     {
         var table = GameObject.Find("Canvas").transform.Find("History").transform.Find("Table").transform;
@@ -43,8 +22,6 @@ public class HistoryScores : MonoBehaviour
         int i = 0;
         foreach (KeyValuePair<string, UserDataRecord> entry in dict)
         {
-            //Debug.Log($"{entry.Key}: {entry.Value.Value}");
-            //GameObject newGo = Instantiate(rowPrefab, rowsParent);
             if(i>= n)
             {
                 return;
@@ -55,23 +32,11 @@ public class HistoryScores : MonoBehaviour
             texts[1].text = entry.Value.Value;
         }
 
-        //GameObject newGo = Instantiate(rowPrefab, rowsParent);
-        //var texts = newGo.GetComponentsInChildren<Text>();
-        //texts[0].text = "1";
-        //texts[1].text = "e";
-
-        //foreach (KeyValuePair<string, UserDataRecord> entry in dict)
-        //{
-        //  GameObject newGo = Instantiate(rowPrefab, rowsParent);
-        //  var texts = newGo.GetComponentsInChildren<Text>();
-        //  texts[0].text = entry.Key;
-        //  texts[1].text = entry.Value.Value;
-        //}
-
     }
+
+    // represents the history screen
     public void OnClick()
     {
-        //Debug.Log("OnClick");
         var canvas = GameObject.Find("Canvas").transform;
         var menu = canvas.Find("MainMenu");
         menu.gameObject.SetActive(false);
