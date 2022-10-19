@@ -6,6 +6,7 @@ using PlayFab.ClientModels;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class HistoryScores : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class HistoryScores : MonoBehaviour
         var table = GameObject.Find("Canvas").transform.Find("History").transform.Find("Table").transform;
         var n = table.childCount;
         int i = 0;
-        foreach (KeyValuePair<string, UserDataRecord> entry in dict)
+        foreach (KeyValuePair<string, UserDataRecord> entry in dict.OrderBy(kvp => int.Parse(kvp.Value.Value)*-1))
         {
             if(i>= n)
             {

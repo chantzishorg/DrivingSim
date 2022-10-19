@@ -51,7 +51,7 @@ public class PlayFabManager : MonoBehaviour
         },
         result => Debug.Log("Successfully updated user data"),
         error => {
-            Debug.Log("Got error setting user data Ancestor to Arthur");
+            Debug.Log("Got error");
             Debug.Log(error.GenerateErrorReport());
         });
     }
