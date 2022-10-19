@@ -12,10 +12,18 @@ public class viewModel
         if (isRunning)
         {
             isRunning = false;
-            Failure.Reportfailure(failure);
+            End.Reportfailure(failure);
         }
     }
-   
+
+    public static void ReportEnd(string failure)
+    {
+        if (isRunning)
+        {
+            isRunning = false;
+            End.ReportEnd(failure);
+        }
+    }
     public static void loadImage(string fileName,bool isInstruction)
     {
         LastSign.loadImage(fileName, isInstruction);
@@ -117,7 +125,7 @@ public class viewModel
         App.AddTrafficLights(tl1, tl2, tl3, tl4, onLightChange, onAreaEnter);
     }
 
-        public static void MoveCar(float x, float z, Vector2 direction)
+    public static void MoveCar(float x, float z, Vector2 direction)
     {
         if (isRunning)
         {
@@ -137,5 +145,10 @@ public class viewModel
     {
             isRunning = false;
             App.EndGame(); 
+    }
+
+    public static void AddEndLine(float x, float z, float width, float vector_x, float vector_z)
+    {
+        App.AddEndLine(x, z, width, vector_x, vector_z);
     }
 }

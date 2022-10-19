@@ -129,6 +129,7 @@ public class App : MonoBehaviour
     public static int Score { get { return score; } }
     public float initialSpeedLimit;
     private static bool isStop = false;
+    private static DirectedLine endLine= null;
     private static List<DirectedLine> NoEntranceVector = new List<DirectedLine>();
     private static List<SpeedLimit> SpeedLimitList = new List<SpeedLimit>();
     private static List<DirectedLine> stopFirstVector = new List<DirectedLine>();
@@ -146,6 +147,11 @@ public class App : MonoBehaviour
     private static List<(Vector2, Vector2)> npcCars = new List<(Vector2, Vector2)>();
     private static List<TrafficLightIntersection> trafficLightIntersections = new List<TrafficLightIntersection>();
     private int currentGreenRoad = 0;
+
+    public static void AddEndLine(float x, float z, float width, float vector_x, float vector_z)
+    {
+        endLine = new DirectedLine(x, z, width, vector_x, vector_z);
+    }
 
     public static void AddTrafficLights(
         (Vector2 middle1, float width1, Vector2 vec1, Vector2 middle2, float width2, Vector2 vec2) tl1,
@@ -315,7 +321,6 @@ public class App : MonoBehaviour
             }
         }
 
-
         //loop over the turnDirectionVector
         for (int i = 0; i < turnDirectionVector.Count; i++)
         {
@@ -398,6 +403,17 @@ public class App : MonoBehaviour
                         inter.onAreaEnter(true, i);
                     }
                 }
+            }
+        }
+
+        // check endline
+        if (endLine != null)
+        {
+            PassingCode result = checkCross(oldLocation, carLocation, endLine);
+            if (result == PassingCode.SameDirection)
+            {
+                Debug.Log("You have finished the game!");
+                viewModel.ReportEnd("You have finished the game!");
             }
         }
     }
@@ -486,6 +502,7 @@ public class App : MonoBehaviour
         npcCars = new List<(Vector2, Vector2)>();
         trafficLightIntersections = new List<TrafficLightIntersection>();
         currentGreenRoad = 0;
+        endLine = null;
     }
 
     void Start()
