@@ -78,7 +78,15 @@ public class HistoryScores : MonoBehaviour
         var panelHistory = canvas.Find("History");
         panelHistory.gameObject.SetActive(true);
         PlayFabManager.GetUserData(setTable);
-
     }
-
+    
+    // if click the back button
+    public void onClickButton()
+    {
+        var canvas = GameObject.Find("Canvas").transform;
+        var panelHistory = canvas.Find("History");
+        panelHistory.gameObject.SetActive(false);
+        var menu = canvas.Find("MainMenu");
+        menu.gameObject.SetActive(true);
+    }
 }
